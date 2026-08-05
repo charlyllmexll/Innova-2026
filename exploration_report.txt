@@ -1,0 +1,37 @@
+Reporte generado: 2026-06-19 20:27:36
+Directorio analizado: C:\Users\charl\Downloads\wetransfer_agave16_2026-06-19_1616\Agave16
+
+── RESUMEN GENERAL ──────────────────────────────────
+  Total de archivos encontrados : 117
+  Imágenes válidas              : 117
+  Imágenes corruptas/ilegibles  : 0
+
+── RESOLUCIONES ─────────────────────────────────────
+  Todas las imágenes son 5280x3956
+
+  Ancho  — mín: 5280px  máx: 5280px  promedio: 5280px
+  Alto   — mín: 3956px  máx: 3956px  promedio: 3956px
+
+── TAMAÑO DE ARCHIVOS ───────────────────────────────
+  Mínimo  : 9.36 MB
+  Máximo  : 10.46 MB
+  Promedio: 10.02 MB
+  Total   : 1172.51 MB
+
+── GUÍA PARA CALIBRAR MIN_AREA / MAX_AREA ───────────
+  Área total promedio de imagen: 20,887,680 píxeles
+
+  Si un agave ocupa aproximadamente este % de la imagen:
+      0.1% →   20,887 píxeles cuadrados
+      0.5% →  104,438 píxeles cuadrados
+      1.0% →  208,876 píxeles cuadrados
+      2.0% →  417,753 píxeles cuadrados
+      5.0% → 1,044,384 píxeles cuadrados
+     10.0% → 2,088,768 píxeles cuadrados
+
+  Usa estos valores como referencia para ajustar
+  MIN_AREA y MAX_AREA en el script de anotación.
+
+=======================================================
+Reporte guardado en: exploration_report.txt
+Cuadrícula de muestra guardada en: sample_grid.jpg

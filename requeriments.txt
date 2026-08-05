@@ -1,0 +1,5 @@
+pip install torch torchvision opencv-python numpy tqdm pyyml
+
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu124
+
+pip install git+https://github.com/facebookresearch/segment-anything.git

@@ -1,0 +1,10 @@
+── data.yaml ────────────────────────────────────────
+  ✗ Problemas en data.yaml:
+    → data.yaml no encontrado
+
+  [!] No se encontró el split 'train' — omitiendo
+
+  [!] No se encontró el split 'val' — omitiendo
+
+=======================================================
+  ✓ Dataset válido — listo para entrenar

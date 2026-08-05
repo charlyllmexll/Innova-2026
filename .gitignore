@@ -1,0 +1,38 @@
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+.venv/
+venv/
+env/
+
+.ipynb_checkpoints/
+.idea/
+.vscode/
+.DS_Store
+
+*.log
+*.tmp
+
+# Model weights and large artifacts
+*.pth
+*.pt
+*.ckpt
+
+# Generated datasets and outputs
+Dataset/
+dataset/
+verified/
+verified h/
+
+# Media and reports that are large or generated
+*.jpg
+*.jpeg
+*.png
+*.tif
+*.tiff
+*.zip
+*.tar
+*.gz

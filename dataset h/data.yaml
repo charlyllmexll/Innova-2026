@@ -1,0 +1,7 @@
+path: E:\Nube Mega\Trabajo\programitas\python\Marcado de imagenes\dataset h
+train: images/train
+val: images/val
+
+nc: 1
+names:
+  0: agave
