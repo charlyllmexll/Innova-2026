@@ -25,7 +25,7 @@ from datetime import datetime
 #  CONFIGURACIÓN
 # ─────────────────────────────────────────────
 
-IMAGES_DIR   = r"C:\Users\charl\Downloads\Fotos Drone 50mts Abr 15\Muestra"  # carpeta con tus imágenes originales
+IMAGES_DIR   = r"./Fotos"  # carpeta con tus imágenes originales
 REPORT_FILE  = "exploration_report-h.txt"  # archivo de salida del reporte
 SAMPLE_GRID  = "sample_grid-h.jpg"         # imagen de muestra que genera el script
 GRID_COLS    = 4                         # columnas en la cuadrícula de muestra
