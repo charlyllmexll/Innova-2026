@@ -30,8 +30,8 @@ from tqdm import tqdm
 #  CONFIGURACIÓN
 # ─────────────────────────────────────────────
 
-DATASET_DIR  = r"E:\Nube Mega\Trabajo\programitas\python\Marcado de imagenes\dataset h"
-OUTPUT_DIR   = r"E:\Nube Mega\Trabajo\programitas\python\Marcado de imagenes\verified h"
+DATASET_DIR  = r"./Fotos/dataset h"
+OUTPUT_DIR   = r"./Fotos/verified h"
 SPLIT        = "val"        # "train" o "val" — qué split revisar
 MAX_IMAGES   = 20             # cuántas imágenes verificar (None = todas)
 
