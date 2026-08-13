@@ -22,12 +22,16 @@ pip install -r requeriments.txt
 
 ## Uso
 
-1. Ajusta las rutas de entrada/salida en los scripts.
-2. Ejecuta los scripts en este orden:
-   - 001_Explorar-imagenes.py
-   - 002_Auto-anotar-con-SAM.py
-   - 003_Verificar.py
-   - 004_Validar-dataset.py
+1. **Preparar las imágenes**: Coloque las imágenes crudas del dron dentro de la carpeta `./Fotos`.
+2. **Resultados**: Las imágenes procesadas y las etiquetas se generarán automáticamente dentro de las carpetas `./Fotos/dataset h` y `./Fotos/verified h`.
+3. **Ejecución del Pipeline**: Ejecute los scripts desde la terminal estrictamente en el siguiente orden:
+
+```bash
+python 001_Explorar-imagenes.py
+python 002_Auto-anotar-con-SAM.py
+python 003_Verificar.py
+python 004_Validar-dataset.py
+```
 
 ## Nota
 
