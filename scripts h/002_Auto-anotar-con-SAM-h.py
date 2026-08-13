@@ -22,7 +22,7 @@ from segment_anything import sam_model_registry, SamAutomaticMaskGenerator
 #  CONFIGURACIÓN
 # ─────────────────────────────────────────────
 
-IMAGES_DIR     = r"C:\Users\charl\Downloads\Fotos Drone 50mts Abr 15\Muestra"  # carpeta con tus imágenes originales
+IMAGES_DIR     = r"./Fotos"  # carpeta con tus imágenes originales
 OUTPUT_DIR = r"E:\Nube Mega\Trabajo\programitas\python\Marcado de imagenes\dataset h"
 SAM_CHECKPOINT = "sam_vit_h_4b8939.pth"
 SAM_MODEL_TYPE = "vit_h"
