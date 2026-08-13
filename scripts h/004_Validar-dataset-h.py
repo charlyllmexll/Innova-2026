@@ -29,7 +29,7 @@ from collections import defaultdict
 #  CONFIGURACIÓN
 # ─────────────────────────────────────────────
 
-DATASET_DIR   = r"D:\Nube Mega\Trabajo\programitas\python\Marcado de imagenes\dataset h"      # carpeta generada por el script de anotación
+DATASET_DIR   = r"./Fotos/dataset h"      # carpeta generada por el script de anotación
 REPORT_FILE   = "validation_report-h.txt"
 
 # ─────────────────────────────────────────────
