@@ -23,7 +23,7 @@ from segment_anything import sam_model_registry, SamAutomaticMaskGenerator
 # ─────────────────────────────────────────────
 
 IMAGES_DIR     = r"./Fotos"  # carpeta con tus imágenes originales
-OUTPUT_DIR = r"E:\Nube Mega\Trabajo\programitas\python\Marcado de imagenes\dataset h"
+OUTPUT_DIR     = r"./Fotos/dataset h"
 SAM_CHECKPOINT = "sam_vit_h_4b8939.pth"
 SAM_MODEL_TYPE = "vit_h"
 DEVICE         = "cuda"
