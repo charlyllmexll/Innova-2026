@@ -36,3 +36,24 @@ verified h/
 *.zip
 *.tar
 *.gz
+
+
+
+
+# --- LÍNEAS NUEVAS DE AGROVISIÓN (Añadir al final de su archivo) ---
+
+# Ignorar las fotos crudas que meta el operador
+data/imagenes_crudas/*
+!data/imagenes_crudas/.gitkeep
+
+#Ignorar imagenes anotadas
+data/imagenes_anotadas/*
+!data/imagenes_anotadas/.gitkeep
+
+# Ignorar los reportes visuales pesados que genere el validador
+data/imagenes_verificadas/*
+!data/imagenes_verificadas/.gitkeep
+
+# ¡CRUCIAL! Ignorar el archivo de 2.4 GB de SAM para que GitHub no bloquee la cuenta
+models/*
+!models/.gitkeep
