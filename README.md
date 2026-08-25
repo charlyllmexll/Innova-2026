@@ -36,6 +36,12 @@ Para garantizar la máxima precisión y velocidad en el procesamiento de imágen
 ```bash
 pip install -r requirements.txt
 ```
+*   **TORCH:** Es indispensable instalar la version de torch para CUDA de lo contrario se usara CPU en lugar de GPU, puede hacerlo con la siguiente linea de comandos(se incluye tambien en los requerimientos):
+
+```bash
+conda install pytorch torchvision torchaudio pytorch-cuda=12.1 -c pytorch -c nvidia
+
+```
 
 ---
 
