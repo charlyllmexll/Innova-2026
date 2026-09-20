@@ -31,14 +31,23 @@ class AppEtiquetadoAgave(ctk.CTk):
         self.img_opencv_filtrada = None
         self.ancho_render = 1
         self.alto_render = 1
-        self.escala_zoom = 1.0           
-        self.centro_zoom_x = 0           
-        self.centro_zoom_y = 0           
-        self.ruta_sam = r"C:\Users\charl\Downloads\sam_vit_h_4b8939.pth"  
+        self.escala_zoom = 1.0
+        self.centro_zoom_x = 0
+        self.centro_zoom_y = 0
+        self.zoom_coords = None
+        self.ancho_render = 1
+        self.alto_render = 1
+        self.offset_render_x = 0
+        self.offset_render_y = 0
+        self.ruta_sam = os.path.join(self.ruta_base_proyecto, "models", "sam_vit_h_4b8939.pth")
         self.device = "cuda" if torch.cuda.is_available() else "cpu"  
         self.predictor = None  
         self.lineas_yolo_acumuladas = [] 
         self.mascara_maestra_acumulada = None  
+        self.cajas_anotadas = []
+        self.mascara_propuesta = None
+        self.punto_positivo_propuesto = None
+        self.puntos_negativos_propuestos = []
         
         # Control del lote de fotos aéreas
         self.lista_fotos = []
@@ -198,12 +207,29 @@ class AppEtiquetadoAgave(ctk.CTk):
         
         # Mapeo de eventos del mouse
         self.canvas_foto.bind("<Button-1>", lambda event: self.capturar_clic_operador(event))
+        self.canvas_foto.bind("<Button-3>", lambda event: self.refinar_mascara_con_clic_negativo(event))
 
         # Mapeo del teclado para control del operador
         self.bind("<plus>", lambda event: self.ejecutar_zoom(1.2))   
         self.bind("<minus>", lambda event: self.ejecutar_zoom(0.8))  
         self.bind("<r>", lambda event: self.reiniciar_zoom())        
+        self.bind("<Return>", lambda event: self.aceptar_mascara_propuesta())
+        self.bind("<Escape>", lambda event: self.descartar_mascara_propuesta())
         self.focus_set() 
+
+        self.frame_herramientas = ctk.CTkFrame(self.panel_lateral, fg_color="transparent")
+        self.frame_herramientas.pack(padx=20, pady=5, fill="x")
+        self.btn_zoom_mas = ctk.CTkButton(self.frame_herramientas, text="Zoom +", command=lambda: self.ejecutar_zoom(1.4))
+        self.btn_zoom_mas.pack(side="left", expand=True, padx=(0, 3))
+        self.btn_zoom_menos = ctk.CTkButton(self.frame_herramientas, text="Zoom -", command=lambda: self.ejecutar_zoom(0.7))
+        self.btn_zoom_menos.pack(side="left", expand=True, padx=3)
+        self.btn_zoom_reset = ctk.CTkButton(self.frame_herramientas, text="Restablecer", command=self.reiniciar_zoom)
+        self.btn_zoom_reset.pack(side="left", expand=True, padx=(3, 0))
+
+        self.btn_aceptar_mascara = ctk.CTkButton(self.panel_lateral, text="Aceptar máscara", fg_color="#10B981", command=self.aceptar_mascara_propuesta, state="disabled")
+        self.btn_aceptar_mascara.pack(padx=20, pady=(5, 3), fill="x")
+        self.btn_descartar_mascara = ctk.CTkButton(self.panel_lateral, text="Descartar máscara", fg_color="#DC2626", command=self.descartar_mascara_propuesta, state="disabled")
+        self.btn_descartar_mascara.pack(padx=20, pady=(0, 5), fill="x")
 
     # =====================================================================
     # 4. LÓGICA ACTIVA - MANEJO DE IMÁGENES Y NAVEGACIÓN
@@ -252,6 +278,8 @@ class AppEtiquetadoAgave(ctk.CTk):
         """Lee la imagen actual del lote, procesa filtros ópticos y la manda a pantalla"""
         self.lineas_yolo_acumuladas = []
         self.mascara_maestra_acumulada = None
+        self.cajas_anotadas = []
+        self.descartar_mascara_propuesta()
 
         if not self.lista_fotos:
             return
@@ -307,10 +335,11 @@ class AppEtiquetadoAgave(ctk.CTk):
             print(f"[ERROR DE CARGA] Ocurrió un problema al montar la IA: {e}")
 
     def acoplar_imagen_a_ia(self, matriz_bgr):
-        """Le entrega la matriz actual de OpenCV a SAM para que precalcule las texturas"""
+        """Convierte BGR de OpenCV a RGB antes de calcular el embedding de SAM."""
         if self.predictor is not None:
             print("[SAM] Precalculando mapa de texturas de la imagen actual (Embedding)...")
-            self.predictor.set_image(matriz_bgr)
+            matriz_rgb = cv2.cvtColor(matriz_bgr, cv2.COLOR_BGR2RGB)
+            self.predictor.set_image(matriz_rgb)
 
     # =====================================================================
     # 6. PIPELINE AUTOMÁTICO Y CAMBIO DE INTERFAZ
@@ -483,77 +512,105 @@ class AppEtiquetadoAgave(ctk.CTk):
     # 8. MÓDULO DE INTERACCIÓN POR CLICS E INFERENCIA PRE CREADA
     # =====================================================================
     def capturar_clic_operador(self, event):
-        """Segmenta con SAM, mapea clics bajo zoom y acumula marcas de forma persistente"""
+        """Usa un clic positivo para proponer una máscara, sin guardarla aún."""
         if self.img_opencv_original is None or self.predictor is None:
             return
-
-        alto_real, ancho_real, _ = self.img_opencv_original.shape
-        # Traducción geométrica de coordenadas considerando el factor de zoom activo
-        if hasattr(self, 'zoom_coords') and self.zoom_coords is not None:
-            x1_recorte, y1_recorte, x2_recorte, y2_recorte = self.zoom_coords
-            ancho_recorte = x2_recorte - x1_recorte
-            alto_recorte = y2_recorte - y1_recorte
-            x_real = int(x1_recorte + (event.x * (ancho_recorte / self.ancho_render)))
-            y_real = int(y1_recorte + (event.y * (alto_recorte / self.alto_render)))
-        else:
-            x_real = int(event.x * (ancho_real / self.ancho_render))
-            y_real = int(event.y * (alto_real / self.alto_render))
-
-        # Ajuste de límites seguros
-        x_real = max(0, min(x_real, ancho_real - 1))
-        y_real = max(0, min(y_real, alto_real - 1))
-        print(f"[CLIC EN REGISTRO] Coordenada Real -> X: {x_real}, Y: {y_real}")
-
-        puntos_input = np.array([[x_real, y_real]])
-        etiquetas_input = np.array([1])
-        masks, scores, logits = self.predictor.predict(
-            point_coords=puntos_input,
-            point_labels=etiquetas_input,
-            multimask_output=True
-        )
-        index_optimo = np.argmin(scores) if np.max(scores) > 0.9 else 0
-        mascara_optima = masks[index_optimo]
-
-        # Extracción matemática del Bounding Box
-        indices_y, indices_x = np.where(mascara_optima)
-        if len(indices_x) == 0 or len(indices_y) == 0:
-            print("[IA] Alerta: SAM no pudo estructurar contornos válidos en este píxel.")
+        punto = self.convertir_clic_a_imagen(event.x, event.y)
+        if punto is None:
             return
+        self.punto_positivo_propuesto = punto
+        self.puntos_negativos_propuestos = []
+        self.predecir_mascara_propuesta()
 
+    def refinar_mascara_con_clic_negativo(self, event):
+        """Añade un punto que SAM debe excluir de la máscara propuesta."""
+        if self.mascara_propuesta is None:
+            self.lbl_progreso.configure(text="Primero haz clic izquierdo sobre una planta", text_color="#F59E0B")
+            return
+        punto = self.convertir_clic_a_imagen(event.x, event.y)
+        if punto is None:
+            return
+        self.puntos_negativos_propuestos.append(punto)
+        self.predecir_mascara_propuesta()
+
+    def convertir_clic_a_imagen(self, x_evento, y_evento):
+        """Convierte el clic del visor a coordenadas de la imagen original."""
+        if self.img_opencv_original is None:
+            return None
+        alto_real, ancho_real, _ = self.img_opencv_original.shape
+        x_render = x_evento - self.offset_render_x
+        y_render = y_evento - self.offset_render_y
+        if x_render < 0 or y_render < 0 or x_render >= self.ancho_render or y_render >= self.alto_render:
+            return None
+        if self.zoom_coords is not None:
+            x1, y1, x2, y2 = self.zoom_coords
+            x_real = int(x1 + x_render * ((x2 - x1) / self.ancho_render))
+            y_real = int(y1 + y_render * ((y2 - y1) / self.alto_render))
+        else:
+            x_real = int(x_render * (ancho_real / self.ancho_render))
+            y_real = int(y_render * (alto_real / self.alto_render))
+        return max(0, min(x_real, ancho_real - 1)), max(0, min(y_real, alto_real - 1))
+
+    def predecir_mascara_propuesta(self):
+        puntos = [self.punto_positivo_propuesto] + self.puntos_negativos_propuestos
+        etiquetas = [1] + [0] * len(self.puntos_negativos_propuestos)
+        masks, scores, _ = self.predictor.predict(
+            point_coords=np.array(puntos),
+            point_labels=np.array(etiquetas),
+            multimask_output=True,
+        )
+        index_optimo = int(np.argmax(scores))
+        self.mascara_propuesta = masks[index_optimo]
+        self.renderizar_anotaciones()
+        self.btn_aceptar_mascara.configure(state="normal")
+        self.btn_descartar_mascara.configure(state="normal")
+        self.lbl_progreso.configure(text="Revisa la propuesta: clic derecho excluye zonas", text_color="#F59E0B")
+
+    def aceptar_mascara_propuesta(self):
+        if self.mascara_propuesta is None:
+            return
+        alto_real, ancho_real, _ = self.img_opencv_original.shape
+        indices_y, indices_x = np.where(self.mascara_propuesta)
+        if len(indices_x) == 0:
+            self.descartar_mascara_propuesta()
+            return
         x_min, x_max = np.min(indices_x), np.max(indices_x)
         y_min, y_max = np.min(indices_y), np.max(indices_y)
-        ancho_caja_abs = x_max - x_min
-        alto_caja_abs = y_max - y_min
-
-        # Acumulación de las máscaras para evitar que se borren marcas pasadas
+        ancho_caja = max(1, x_max - x_min)
+        alto_caja = max(1, y_max - y_min)
+        linea_yolo = f"0 {(x_min + ancho_caja / 2) / ancho_real:.6f} {(y_min + alto_caja / 2) / alto_real:.6f} {ancho_caja / ancho_real:.6f} {alto_caja / alto_real:.6f}\n"
+        self.lineas_yolo_acumuladas.append(linea_yolo)
         if self.mascara_maestra_acumulada is None:
             self.mascara_maestra_acumulada = np.zeros((alto_real, ancho_real), dtype=bool)
-        self.mascara_maestra_acumulada = np.logical_or(self.mascara_maestra_acumulada, mascara_optima)
+        self.mascara_maestra_acumulada = np.logical_or(self.mascara_maestra_acumulada, self.mascara_propuesta)
+        self.cajas_anotadas.append((x_min, y_min, x_max, y_max, len(self.lineas_yolo_acumuladas)))
+        self.descartar_mascara_propuesta()
+        self.renderizar_anotaciones()
+        self.lbl_progreso.configure(text=f"Anotación {len(self.lineas_yolo_acumuladas)} aceptada", text_color="#10B981")
 
-        # Normalización estricta YOLO
-        centro_x_norm = (x_min + (ancho_caja_abs / 2)) / ancho_real
-        centro_y_norm = (y_min + (alto_caja_abs / 2)) / alto_real
-        ancho_norm = ancho_caja_abs / ancho_real
-        alto_norm = alto_caja_abs / alto_real
-        linea_yolo = f"0 {centro_x_norm:.6f} {centro_y_norm:.6f} {ancho_norm:.6f} {alto_norm:.6f}\n"
-        self.lineas_yolo_acumuladas.append(linea_yolo)
+    def descartar_mascara_propuesta(self):
+        self.mascara_propuesta = None
+        self.punto_positivo_propuesto = None
+        self.puntos_negativos_propuestos = []
+        if hasattr(self, "btn_aceptar_mascara"):
+            self.btn_aceptar_mascara.configure(state="disabled")
+            self.btn_descartar_mascara.configure(state="disabled")
 
-        # Dibujo analítico sobre la imagen
-        img_con_graficos = self.img_opencv_filtrada.copy()
-        color_verde = np.array([0, 255, 0], dtype=np.uint8)
-        img_con_graficos[self.mascara_maestra_acumulada] = (img_con_graficos[self.mascara_maestra_acumulada] * 0.5 + color_verde * 0.5).astype(np.uint8)
-        cv2.rectangle(img_con_graficos, (x_min, y_min), (x_max, y_max), (0, 255, 0), 3)
-        cv2.circle(img_con_graficos, (x_real, y_real), 8, (0, 0, 255), -1)
-
-        # Mantenimiento preciso del encuadre si existiese zoom activo
-        if hasattr(self, 'zoom_coords') and self.zoom_coords is not None:
+    def renderizar_anotaciones(self):
+        imagen = self.img_opencv_filtrada.copy()
+        if self.mascara_maestra_acumulada is not None:
+            color_verde = np.array([0, 255, 0], dtype=np.uint8)
+            imagen[self.mascara_maestra_acumulada] = (imagen[self.mascara_maestra_acumulada] * 0.5 + color_verde * 0.5).astype(np.uint8)
+        for x_min, y_min, x_max, y_max, numero in self.cajas_anotadas:
+            cv2.rectangle(imagen, (x_min, y_min), (x_max, y_max), (0, 255, 0), 3)
+            cv2.putText(imagen, str(numero), (x_min, max(30, y_min - 8)), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), 2)
+        if self.mascara_propuesta is not None:
+            color_amarillo = np.array([0, 255, 255], dtype=np.uint8)
+            imagen[self.mascara_propuesta] = (imagen[self.mascara_propuesta] * 0.5 + color_amarillo * 0.5).astype(np.uint8)
+        if self.zoom_coords is not None:
             x1, y1, x2, y2 = self.zoom_coords
-            matriz_final_render = img_con_graficos[y1:y2, x1:x2]
-        else:
-            matriz_final_render = img_con_graficos
-
-        self.renderizar_matriz_en_pantalla_con_capas(matriz_final_render)
-        print(f"[RENDER] Anotaciones vivas en esta sesión: {len(self.lineas_yolo_acumuladas)} agaves.")
+            imagen = imagen[y1:y2, x1:x2]
+        self.renderizar_matriz_en_pantalla_con_capas(imagen)
 
     def guardar_etiquetas_yolo(self):
         """Toma las líneas acumuladas en memoria y escribe el archivo .txt oficial de YOLO"""
@@ -621,6 +678,11 @@ class AppEtiquetadoAgave(ctk.CTk):
         img_pil = Image.fromarray(img_rgb)
         img_pil.thumbnail((800, 500))
         self.ancho_render, self.alto_render = img_pil.size
+        self.update_idletasks()
+        ancho_panel = max(self.canvas_foto.winfo_width(), self.ancho_render)
+        alto_panel = max(self.canvas_foto.winfo_height(), self.alto_render)
+        self.offset_render_x = max(0, (ancho_panel - self.ancho_render) // 2)
+        self.offset_render_y = max(0, (alto_panel - self.alto_render) // 2)
         img_tk = ImageTk.PhotoImage(img_pil)
         self.canvas_foto.configure(image=img_tk, text="")
         self.canvas_foto.image = img_tk

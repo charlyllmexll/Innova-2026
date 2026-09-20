@@ -8,6 +8,7 @@ torchvision
 torchaudio
 opencv-python
 numpy
+Pillow
 tqdm
 pyyaml
 customtkinter

@@ -112,6 +112,20 @@ python core/estacion_anotacion/estacion_anotacion.py
 
 Las anotaciones manuales o asistidas se guardan en `data/imagenes_anotadas/` como archivos `.txt` compatibles con YOLO.
 
+### Flujo recomendado para marcar una planta
+
+1. Carga el lote y selecciona una imagen con plantas claramente visibles.
+2. Usa `Zoom +` para acercarte a una corona; también puedes usar las teclas `+` y `-`.
+3. Haz clic izquierdo en el centro de una planta. SAM mostrará una **máscara amarilla de propuesta**.
+4. Si la máscara incluye terreno, camino o una planta vecina, haz clic derecho sobre la zona incorrecta. Ese punto se envía a SAM como una región negativa y la propuesta se recalcula.
+5. Repite los clics derechos hasta que la máscara cubra solo el agave.
+6. Pulsa `Aceptar máscara` para guardar la anotación YOLO. También puedes presionar `Enter`.
+7. Pulsa `Descartar máscara` o `Esc` si la propuesta no puede corregirse y deseas empezar de nuevo.
+8. La caja verde numerada representa una anotación aceptada; la máscara amarilla representa una propuesta aún no guardada.
+9. Pulsa `Restablecer` o la tecla `R` para volver a la vista completa de la imagen.
+
+La estación convierte internamente las imágenes BGR de OpenCV al formato RGB que espera SAM y selecciona la máscara con mayor puntuación. Aun así, cada propuesta debe revisarse antes de aceptarse.
+
 ### Pipeline automático del dataset
 
 Ejecute los pasos en este orden:
@@ -164,9 +178,12 @@ La interfaz permite:
 
 - cargar las imágenes de `data/imagenes_crudas/`;
 - navegar entre las imágenes del lote;
-- consultar el número de plantas detectadas por imagen;
-- consultar el peso promedio por planta;
-- consultar el peso total estimado de cada imagen.
+- consultar únicamente el resumen de la imagen activa;
+- consultar el número de plantas detectadas en la imagen activa;
+- visualizar un bounding box numerado sobre cada planta;
+- consultar el peso estimado asociado a cada número de planta;
+- consultar el peso total y promedio de la imagen activa;
+- exportar todas las detecciones procesadas a CSV para análisis de campo.
 
 ### Ejecución por línea de comandos
 

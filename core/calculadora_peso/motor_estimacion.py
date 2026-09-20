@@ -122,6 +122,7 @@ def procesar_imagen(ruta_imagen: str, metros_por_pixel: float = 0.05, min_area_p
 
         detecciones.append({
             "imagen": os.path.basename(ruta_imagen),
+            "planta_numero": len(detecciones) + 1,
             "area_px": round(float(area_px), 2),
             "diametro_px": round(float(diametro_px), 2),
             "diametro_cm": round(float(diametro_cm), 2),
@@ -143,6 +144,7 @@ def exportar_csv(registros, ruta_csv: str):
 
     campos = [
         "imagen",
+        "planta_numero",
         "area_px",
         "diametro_px",
         "diametro_cm",
