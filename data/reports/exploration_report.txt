@@ -1,0 +1,25 @@
+=========================================================
+        AGROVISIÓN ANALYTICS - REPORTE DE AUDITORÍA ÓPTICA
+=========================================================
+
+Total de archivos analizados: 14
+
+[001] APTA: DJI_20260415111631_0059_D.JPG -> Dimensiones: 5280x3956 píxeles | Canales: 3
+[002] APTA: DJI_20260415111652_0061_D.JPG -> Dimensiones: 5280x3956 píxeles | Canales: 3
+[003] APTA: DJI_20260415111702_0062_D.JPG -> Dimensiones: 5280x3956 píxeles | Canales: 3
+[004] APTA: DJI_20260415111713_0063_D.JPG -> Dimensiones: 5280x3956 píxeles | Canales: 3
+[005] APTA: DJI_20260415111723_0064_D.JPG -> Dimensiones: 5280x3956 píxeles | Canales: 3
+[006] APTA: DJI_20260415111734_0065_D.JPG -> Dimensiones: 5280x3956 píxeles | Canales: 3
+[007] APTA: DJI_20260415111754_0067_D.JPG -> Dimensiones: 5280x3956 píxeles | Canales: 3
+[008] APTA: WhatsApp Image 2026-08-20 at 2.04.57 PM.jpeg -> Dimensiones: 1600x1198 píxeles | Canales: 3
+[009] APTA: WhatsApp Image 2026-08-20 at 2.05.04 PM.jpeg -> Dimensiones: 1600x1198 píxeles | Canales: 3
+[010] APTA: WhatsApp Image 2026-08-20 at 2.05.10 PM.jpeg -> Dimensiones: 1600x1198 píxeles | Canales: 3
+[011] APTA: WhatsApp Image 2026-08-20 at 2.05.15 PM.jpeg -> Dimensiones: 1600x1198 píxeles | Canales: 3
+[012] APTA: WhatsApp Image 2026-08-20 at 2.05.19 PM.jpeg -> Dimensiones: 1600x1198 píxeles | Canales: 3
+[013] APTA: WhatsApp Image 2026-08-20 at 2.05.29 PM.jpeg -> Dimensiones: 1600x1198 píxeles | Canales: 3
+[014] APTA: WhatsApp Image 2026-08-20 at 2.05.35 PM.jpeg -> Dimensiones: 1600x1198 píxeles | Canales: 3
+
+---------------------------------------------------------
+RESUMEN FINAL DEL LOTE:
+ - Imágenes aptas para procesamiento por IA: 14
+ - Imágenes rechazadas por control de calidad: 0

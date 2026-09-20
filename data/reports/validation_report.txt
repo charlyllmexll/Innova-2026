@@ -1,0 +1,26 @@
+=========================================================
+      AGROVISIÓN ANALYTICS - CERTIFICACIÓN FINAL DEL DATASET
+=========================================================
+
+--- AUDITORÍA DE CONSISTENCIA DE IMÁGENES ---
+[FALLO] Huérfano: DJI_20260415111631_0059_D -> No cuenta con archivo de anotaciones de IA (.txt).
+[FALLO] Huérfano: DJI_20260415111652_0061_D -> No cuenta con archivo de anotaciones de IA (.txt).
+[FALLO] Huérfano: DJI_20260415111702_0062_D -> No cuenta con archivo de anotaciones de IA (.txt).
+[FALLO] Huérfano: DJI_20260415111713_0063_D -> No cuenta con archivo de anotaciones de IA (.txt).
+[FALLO] Huérfano: DJI_20260415111723_0064_D -> No cuenta con archivo de anotaciones de IA (.txt).
+[FALLO] Huérfano: DJI_20260415111734_0065_D -> No cuenta con archivo de anotaciones de IA (.txt).
+[FALLO] Huérfano: DJI_20260415111754_0067_D -> No cuenta con archivo de anotaciones de IA (.txt).
+[OK] Sincronizado: WhatsApp Image 2026-08-20 at 2.04.57 PM -> Vinculado a su .txt con 37 agaves etiquetados.
+[OK] Sincronizado: WhatsApp Image 2026-08-20 at 2.05.04 PM -> Vinculado a su .txt con 35 agaves etiquetados.
+[FALLO] Huérfano: WhatsApp Image 2026-08-20 at 2.05.10 PM -> No cuenta con archivo de anotaciones de IA (.txt).
+[FALLO] Huérfano: WhatsApp Image 2026-08-20 at 2.05.15 PM -> No cuenta con archivo de anotaciones de IA (.txt).
+[FALLO] Huérfano: WhatsApp Image 2026-08-20 at 2.05.19 PM -> No cuenta con archivo de anotaciones de IA (.txt).
+[FALLO] Huérfano: WhatsApp Image 2026-08-20 at 2.05.29 PM -> No cuenta con archivo de anotaciones de IA (.txt).
+[FALLO] Huérfano: WhatsApp Image 2026-08-20 at 2.05.35 PM -> No cuenta con archivo de anotaciones de IA (.txt).
+
+---------------------------------------------------------
+DICTAMEN FINAL DE CERTIFICACIÓN:
+ - Muestras emparejadas y aprobadas: 2
+ - Muestras inválidas o sin anotar: 12
+
+ESTADO DEL DATASET: [RECHAZADO] Existen inconsistencias o archivos sin etiquetar. Revise el log de arriba.

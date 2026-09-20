@@ -1,0 +1,42 @@
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+.venv/
+venv/
+env/
+.ipynb_checkpoints/
+.idea/
+.vscode/
+.DS_Store
+*.log
+*.tmp
+
+# Model weights and large artifacts
+*.pth
+*.pt
+*.ckpt
+
+# Generated media and outputs
+*.jpg
+*.jpeg
+*.png
+*.tif
+*.tiff
+*.zip
+*.tar
+*.gz
+data/output/
+data/estimaciones/
+
+# Local drone images and generated annotation media
+data/imagenes_crudas/*
+!data/imagenes_crudas/.gitkeep
+data/imagenes_anotadas/*
+!data/imagenes_anotadas/.gitkeep
+data/imagenes_verificadas/*
+!data/imagenes_verificadas/.gitkeep
+models/*
+!models/.gitkeep
